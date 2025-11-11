@@ -64,16 +64,16 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void criarUsuarios() {
-        Usuario usuario1 = new Usuario("João Silva", "joao.silva@email.com", "Desenvolvimento", "PLENO");
+        Usuario usuario1 = new Usuario("João Silva", "joao.silva@email.com", "Desenvolvimento", "PLENO","joao123");
         usuario1.setDataCadastro(LocalDate.of(2024, 1, 15));
 
-        Usuario usuario2 = new Usuario("Maria Santos", "maria.santos@email.com", "Análise de Dados", "SENIOR");
+        Usuario usuario2 = new Usuario("Maria Santos", "maria.santos@email.com", "Análise de Dados", "SENIOR","maria123");
         usuario2.setDataCadastro(LocalDate.of(2023, 8, 22));
 
-        Usuario usuario3 = new Usuario("Pedro Oliveira", "pedro.oliveira@email.com", "Marketing", "JUNIOR");
+        Usuario usuario3 = new Usuario("Pedro Oliveira", "pedro.oliveira@email.com", "Marketing", "JUNIOR","pedro123");
         usuario3.setDataCadastro(LocalDate.of(2024, 3, 10));
 
-        Usuario usuario4 = new Usuario("Ana Costa", "ana.costa@email.com", "RH", "EM_TRANSICAO");
+        Usuario usuario4 = new Usuario("Ana Costa", "ana.costa@email.com", "RH", "EM_TRANSICAO","ana123");
         usuario4.setDataCadastro(LocalDate.of(2024, 2, 5));
 
         usuarioRepository.saveAll(Arrays.asList(usuario1, usuario2, usuario3, usuario4));
