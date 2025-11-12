@@ -76,6 +76,9 @@ public class DataLoader implements CommandLineRunner {
         Usuario usuario4 = new Usuario("Ana Costa", "ana.costa@email.com", "RH", "EM_TRANSICAO","ana123");
         usuario4.setDataCadastro(LocalDate.of(2024, 2, 5));
 
+        Usuario admin = new Usuario("Administrador", "admin@email.com", "TI", "ADMIN", "admin123");
+        usuarioRepository.save(admin);
+
         usuarioRepository.saveAll(Arrays.asList(usuario1, usuario2, usuario3, usuario4));
     }
 

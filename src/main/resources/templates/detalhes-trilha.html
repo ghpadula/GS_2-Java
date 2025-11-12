@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${trilha.nome} + ' - Plataforma Upskilling 2030'">Detalhes da Trilha</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .trilha-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .competencia-badge {
+            font-size: 0.9em;
+            margin: 0.2rem;
+        }
+        .action-buttons {
+            position: sticky;
+            top: 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/dashboard}">
+            🚀 Upskilling 2030
+        </a>
+
+        <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <span th:text="${usuario.nome}">Usuário</span>
+                </span>
+            <a class="nav-link" th:href="@{/trilhas}">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <a class="nav-link" th:href="@{/dashboard}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- Cabeçalho da Trilha -->
+    <div class="trilha-header">
+        <div class="row">
+            <div class="col-md-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}" class="text-white">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/trilhas}" class="text-white">Trilhas</a></li>
+                        <li class="breadcrumb-item active text-white" aria-current="page" th:text="${trilha.nome}">Trilha</li>
+                    </ol>
+                </nav>
+
+                <h1 th:text="${trilha.nome}">Nome da Trilha</h1>
+                <p class="lead" th:text="${trilha.descricao}">Descrição da trilha...</p>
+
+                <div class="d-flex gap-3 mt-3">
+                        <span class="badge"
+                              th:classappend="${trilha.nivel == 'INICIANTE'} ? 'bg-success' :
+                                             (${trilha.nivel == 'INTERMEDIARIO'} ? 'bg-warning' : 'bg-danger')"
+                              th:text="${trilha.nivel}">Nível</span>
+                    <span class="badge bg-info" th:text="${trilha.focoPrincipal}">Foco</span>
+                    <span class="badge bg-secondary">
+                            <i class="fas fa-clock"></i>
+                            <span th:text="${trilha.cargaHoraria}">0</span> horas
+                        </span>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fas fa-graduation-cap fa-6x opacity-75"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Conteúdo Principal -->
+        <div class="col-lg-8">
+            <!-- Competências -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-star text-warning"></i>
+                        Competências Desenvolvidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${competencias.empty}">
+                        <p class="text-muted">Nenhuma competência associada a esta trilha.</p>
+                    </div>
+                    <div th:each="competencia : ${competencias}" class="mb-3">
+                        <h6 th:text="${competencia.nome}" class="text-primary">Nome da Competência</h6>
+                        <p class="text-muted mb-1" th:text="${competencia.descricao}">Descrição da competência...</p>
+                        <span class="badge competencia-badge bg-light text-dark"
+                              th:text="${competencia.categoria}">Categoria</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descrição Detalhada -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle text-info"></i>
+                        Sobre esta Trilha
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p th:text="${trilha.descricao}">Descrição detalhada da trilha...</p>
+
+                    <div class="row text-center mt-4">
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <i class="fas fa-layer-group fa-2x text-primary mb-2"></i>
+                                <h6 th:text="${trilha.nivel}">Nível</h6>
+                                <small class="text-muted">Dificuldade</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <i class="fas fa-clock fa-2x text-success mb-2"></i>
+                                <h6 th:text="${trilha.cargaHoraria} + 'h'">0h</h6>
+                                <small class="text-muted">Carga Horária</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <i class="fas fa-bullseye fa-2x text-warning mb-2"></i>
+                                <h6 th:text="${trilha.focoPrincipal}">Foco</h6>
+                                <small class="text-muted">Área Principal</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar - Ações -->
+        <div class="col-lg-4">
+            <div class="action-buttons">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Ações</h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Matricular/Status -->
+                        <div th:if="${jaMatriculado}" class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Você está matriculado!</strong>
+                            <p class="mb-0 mt-2">Acesse suas matrículas para acompanhar o progresso.</p>
+                        </div>
+
+                        <div th:unless="${jaMatriculado}">
+                            <form th:action="@{/trilhas/{id}/matricular(id=${trilha.id})}" method="post">
+                                <button type="submit" class="btn btn-success w-100 mb-3">
+                                    <i class="fas fa-bookmark"></i>
+                                    Matricular-se
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Botões Admin - APENAS PARA ADMIN -->
+                        <div th:if="${isAdmin}" class="border-top pt-3 mt-3">
+                            <a th:href="@{/trilhas/{id}/editar(id=${trilha.id})}"
+                               class="btn btn-outline-primary w-100 mb-2">
+                                <i class="fas fa-edit"></i>
+                                Editar Trilha
+                            </a>
+
+                            <form th:action="@{/trilhas/{id}/deletar(id=${trilha.id})}" method="post"
+                                  th:onsubmit="return confirm('Tem certeza que deseja excluir esta trilha?')">
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-trash"></i>
+                                    Excluir Trilha
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Navegação -->
+                        <div class="border-top pt-3 mt-3">
+                            <a th:href="@{/trilhas}" class="btn btn-outline-secondary w-100 mb-2">
+                                <i class="fas fa-list"></i>
+                                Ver Todas as Trilhas
+                            </a>
+                            <a th:href="@{/dashboard}" class="btn btn-outline-dark w-100">
+                                <i class="fas fa-home"></i>
+                                Voltar ao Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensagens Flash -->
+                <div th:if="${param.sucesso}" class="alert alert-success mt-3">
+                    <i class="fas fa-check"></i>
+                    <span th:text="${param.sucesso == 'matricula_realizada'} ? 'Matrícula realizada com sucesso!' : 'Ação realizada com sucesso!'"></span>
+                </div>
+
+                <div th:if="${param.erro}" class="alert alert-danger mt-3">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span th:text="${param.erro == 'ja_matriculado'} ? 'Você já está matriculado nesta trilha!' : 'Ocorreu um erro!'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white mt-5 py-4">
+    <div class="container text-center">
+        <p>🚀 Plataforma de Upskilling/Reskilling 2030</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

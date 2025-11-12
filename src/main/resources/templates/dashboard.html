@@ -57,6 +57,15 @@
         </div>
     </div>
 
+    <!-- Botão Criar Nova Trilha - APENAS ADMIN -->
+    <div th:if="${isAdmin}" class="row mt-4">
+        <div class="col-12 text-end">
+            <a th:href="@{/trilhas/novo}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Criar Nova Trilha
+            </a>
+        </div>
+    </div>
+
     <!-- Cards de Estatísticas -->
     <div class="row mt-4">
         <div class="col-md-4 mb-3">

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${trilha.id != null} ? 'Editar Trilha' : 'Nova Trilha'">Formulário Trilha</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .competencia-item {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        .competencia-item:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+        }
+        .competencia-item.selected {
+            background-color: #e7f3ff;
+            border-color: #007bff;
+        }
+        .checkbox-label {
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/dashboard}">
+            🚀 Upskilling 2030
+        </a>
+
+        <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    👋 <span th:text="${usuario.nome}">Usuário</span>
+                </span>
+            <a class="nav-link" th:href="@{/trilhas}">
+                <i class="fas fa-list"></i> Trilhas
+            </a>
+            <a class="nav-link" th:href="@{/dashboard}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Cabeçalho -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 th:text="${trilha.id != null} ? '✏️ Editar Trilha' : '➕ Nova Trilha'">
+                        Nova Trilha
+                    </h1>
+                    <p class="text-muted" th:text="${trilha.id != null} ?
+                            'Atualize os dados da trilha' : 
+                            'Crie uma nova trilha de aprendizado'">
+                        Crie uma nova trilha de aprendizado
+                    </p>
+                </div>
+                <a th:href="@{/trilhas}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <!-- Mensagens Simples -->
+            <div th:if="${param.erro}" class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${param.erro}">Ocorreu um erro!</span>
+            </div>
+
+            <!-- Formulário -->
+            <div class="card">
+                <div class="card-body">
+                    <form th:action="${trilha.id != null} ?
+                                        @{/trilhas/{id}(id=${trilha.id})} : 
+                                        @{/trilhas}"
+                          method="post">
+
+                        <!-- Nome -->
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">
+                                <i class="fas fa-heading"></i> Nome da Trilha *
+                            </label>
+                            <input type="text" class="form-control" id="nome" name="nome"
+                                   th:value="${trilha.nome}"
+                                   placeholder="Ex: Fundamentos de IA e Machine Learning"
+                                   required>
+                            <div class="form-text">Nome descritivo e atrativo para a trilha.</div>
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">
+                                <i class="fas fa-align-left"></i> Descrição *
+                            </label>
+                            <textarea class="form-control" id="descricao" name="descricao"
+                                      rows="4"
+                                      th:text="${trilha.descricao}"
+                                      placeholder="Descreva os objetivos e conteúdo da trilha..."
+                                      required></textarea>
+                            <div class="form-text">Explique o que os alunos aprenderão nesta trilha.</div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Nível -->
+                            <div class="col-md-6 mb-3">
+                                <label for="nivel" class="form-label">
+                                    <i class="fas fa-chart-line"></i> Nível *
+                                </label>
+                                <select class="form-select" id="nivel" name="nivel" required>
+                                    <option value="">Selecione o nível...</option>
+                                    <option value="INICIANTE"
+                                            th:selected="${trilha.nivel == 'INICIANTE'}">
+                                        🟢 Iniciante
+                                    </option>
+                                    <option value="INTERMEDIARIO"
+                                            th:selected="${trilha.nivel == 'INTERMEDIARIO'}">
+                                        🟡 Intermediário
+                                    </option>
+                                    <option value="AVANCADO"
+                                            th:selected="${trilha.nivel == 'AVANCADO'}">
+                                        🔴 Avançado
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Carga Horária -->
+                            <div class="col-md-6 mb-3">
+                                <label for="cargaHoraria" class="form-label">
+                                    <i class="fas fa-clock"></i> Carga Horária (horas) *
+                                </label>
+                                <input type="number" class="form-control" id="cargaHoraria"
+                                       name="cargaHoraria"
+                                       th:value="${trilha.cargaHoraria}"
+                                       min="1" max="500"
+                                       placeholder="Ex: 40"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Foco Principal -->
+                        <div class="mb-3">
+                            <label for="focoPrincipal" class="form-label">
+                                <i class="fas fa-bullseye"></i> Foco Principal *
+                            </label>
+                            <select class="form-select" id="focoPrincipal" name="focoPrincipal" required>
+                                <option value="">Selecione o foco...</option>
+                                <option value="IA" th:selected="${trilha.focoPrincipal == 'IA'}">
+                                    🤖 IA & Machine Learning
+                                </option>
+                                <option value="Dados" th:selected="${trilha.focoPrincipal == 'Dados'}">
+                                    📊 Análise de Dados
+                                </option>
+                                <option value="Cloud" th:selected="${trilha.focoPrincipal == 'Cloud'}">
+                                    ☁️ Cloud Computing
+                                </option>
+                                <option value="Soft Skills" th:selected="${trilha.focoPrincipal == 'Soft Skills'}">
+                                    🤝 Soft Skills
+                                </option>
+                                <option value="Desenvolvimento" th:selected="${trilha.focoPrincipal == 'Desenvolvimento'}">
+                                    💻 Desenvolvimento
+                                </option>
+                                <option value="Outros" th:selected="${trilha.focoPrincipal == 'Outros'}">
+                                    🔧 Outros
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Competências -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-star"></i> Competências Desenvolvidas
+                            </label>
+                            <div class="form-text mb-3">
+                                Selecione as competências que serão desenvolvidas nesta trilha:
+                            </div>
+
+                            <div class="row">
+                                <div th:each="competencia : ${competencias}" class="col-md-6 mb-2">
+                                    <div class="competencia-item">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox"
+                                                   th:id="${'comp_' + competencia.id}"
+                                                   th:value="${competencia.id}"
+                                                   name="competenciasIds"
+                                                   th:checked="${trilha.competencias != null && trilha.competencias.contains(competencia)}">
+                                            <label class="form-check-label checkbox-label"
+                                                   th:for="${'comp_' + competencia.id}">
+                                                <strong th:text="${competencia.nome}">Nome Competência</strong>
+                                                <br>
+                                                <small class="text-muted" th:text="${competencia.categoria}">Categoria</small>
+                                                <br>
+                                                <small class="text-muted" th:text="${competencia.descricao}">Descrição</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mensagem se não houver competências -->
+                            <div th:if="${competencias.empty}" class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Nenhuma competência cadastrada no sistema.
+                            </div>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a th:href="@{/trilhas}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                <span th:text="${trilha.id != null} ? 'Atualizar Trilha' : 'Criar Trilha'">
+                                        Criar Trilha
+                                    </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Informações Adicionais -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6><i class="fas fa-lightbulb text-warning"></i> Dicas para uma boa trilha:</h6>
+                    <ul class="text-muted">
+                        <li>Use nomes claros e objetivos</li>
+                        <li>Descreva bem o que será aprendido</li>
+                        <li>Escolha o nível adequado para o público-alvo</li>
+                        <li>Estime uma carga horária realista</li>
+                        <li>Defina um foco principal bem específico</li>
+                        <li>Selecione competências relevantes para a trilha</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white mt-5 py-4">
+    <div class="container text-center">
+        <p>🚀 Plataforma de Upskilling/Reskilling 2030</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Efeito visual para checkboxes de competências
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('input[name="competenciasIds"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const item = this.closest('.competencia-item');
+                if (this.checked) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+
+            // Aplicar estado inicial
+            const item = checkbox.closest('.competencia-item');
+            if (checkbox.checked) {
+                item.classList.add('selected');
+            }
+        });
+    });
+</script>
+</body>
+</html>
