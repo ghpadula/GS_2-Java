@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
-
 @Controller
 public class AuthController {
 
@@ -37,19 +35,16 @@ public class AuthController {
     @Autowired
     private MatriculaRepository matriculaRepository;
 
-
     @GetMapping("/")
     public String home() {
         return "redirect:/login";
     }
-
 
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginRequest", new LoginRequest());
         return "login";
     }
-
 
     @PostMapping("/login")
     public String login(@ModelAttribute LoginRequest loginRequest, HttpSession session, Model model) {
@@ -64,27 +59,34 @@ public class AuthController {
         }
     }
 
-
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
-        // Verificar se usuário está logado
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
         if (usuario == null) {
             return "redirect:/login";
         }
 
-        // Estatísticas focadas em aprendizado
+
         model.addAttribute("usuario", usuario);
         model.addAttribute("totalTrilhas", trilhaRepository.count());
         model.addAttribute("totalCompetencias", competenciaRepository.count());
 
+        long minhasMatriculasAtivas = matriculaRepository.countByUsuarioAndStatus(usuario, "ATIVA");
+        model.addAttribute("minhasMatriculas", minhasMatriculasAtivas);
 
-        long minhasMatriculasCount = matriculaRepository.countByUsuarioId(usuario.getId());
-        model.addAttribute("minhasMatriculas", minhasMatriculasCount);
+
+        if (usuario.isAdmin()) {
+            model.addAttribute("totalUsuarios", usuarioRepository.count());
+            model.addAttribute("totalConcluidas", 0);
+        } else {
+            model.addAttribute("totalUsuarios", null);
+
+            long totalConcluidas = matriculaRepository.countByUsuarioAndStatus(usuario, "CONCLUIDA");
+            model.addAttribute("totalConcluidas", totalConcluidas);
+        }
 
         return "dashboard";
     }
-
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {

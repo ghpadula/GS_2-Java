@@ -13,41 +13,28 @@ public class Matricula {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Usuário é obrigatório")
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @NotNull(message = "Trilha é obrigatória")
     @ManyToOne
     @JoinColumn(name = "trilha_id", nullable = false)
     private Trilha trilha;
 
-    @NotNull(message = "Data de inscrição é obrigatória")
-    @Column(name = "data_inscricao", nullable = false)
-    private LocalDate dataInscricao;
+    @Column(nullable = false, length = 20)
+    private String status; // ATIVA, CONCLUIDA, CANCELADA
 
-    @NotBlank(message = "Status é obrigatório")
-    @Column(nullable = false, length = 50)
-    private String status;
+    @Column(name = "data_matricula", nullable = false)
+    private LocalDate dataMatricula;
 
+    // Construtores
     public Matricula() {}
 
     public Matricula(Usuario usuario, Trilha trilha, String status) {
         this.usuario = usuario;
         this.trilha = trilha;
         this.status = status;
-        this.dataInscricao = LocalDate.now();
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (dataInscricao == null) {
-            dataInscricao = LocalDate.now();
-        }
-        if (status == null) {
-            status = "ATIVA";
-        }
+        this.dataMatricula = LocalDate.now();
     }
 
     // Getters e Setters
@@ -60,9 +47,9 @@ public class Matricula {
     public Trilha getTrilha() { return trilha; }
     public void setTrilha(Trilha trilha) { this.trilha = trilha; }
 
-    public LocalDate getDataInscricao() { return dataInscricao; }
-    public void setDataInscricao(LocalDate dataInscricao) { this.dataInscricao = dataInscricao; }
-
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public LocalDate getDataMatricula() { return dataMatricula; }
+    public void setDataMatricula(LocalDate dataMatricula) { this.dataMatricula = dataMatricula; }
 }

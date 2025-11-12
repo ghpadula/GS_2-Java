@@ -33,18 +33,22 @@ public class Usuario {
     @Column(name = "senha", length = 255, nullable = false)
     private String senha;
 
-    @NotNull(message = "Data de cadastro é obrigatória")
+
     @Column(name = "data_cadastro", nullable = false)
     private LocalDate dataCadastro;
 
+    @Column(name = "admin", nullable = false)
+    private boolean admin = false;
+
     public Usuario() {}
 
-    public Usuario(String nome, String email, String areaAtuacao, String nivelCarreira, String senha) {
+    public Usuario(String nome, String email, String areaAtuacao, String nivelCarreira, String senha, boolean admin) {
         this.nome = nome;
         this.email = email;
         this.areaAtuacao = areaAtuacao;
         this.nivelCarreira = nivelCarreira;
         this.senha = senha;
+        this.admin = admin;
         this.dataCadastro = LocalDate.now();
     }
 
@@ -76,4 +80,12 @@ public class Usuario {
 
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
+
+    public boolean isAdmin() {
+        return this.admin || "admin@email.com".equalsIgnoreCase(this.email);
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
 }

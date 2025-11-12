@@ -37,11 +37,10 @@ public class DataLoader implements CommandLineRunner {
         trilhaRepository.deleteAll();
         competenciaRepository.deleteAll();
 
-
         criarCompetencias();
         criarUsuarios();
         criarTrilhas();
-        criarMatriculas();
+        criarMatriculasReais();
 
         System.out.println("Dados iniciais carregados com sucesso!");
     }
@@ -64,22 +63,23 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void criarUsuarios() {
-        Usuario usuario1 = new Usuario("João Silva", "joao.silva@email.com", "Desenvolvimento", "PLENO","joao123");
+
+        Usuario usuario1 = new Usuario("João Silva", "joao.silva@email.com", "Desenvolvimento", "PLENO", "joao123", false);
         usuario1.setDataCadastro(LocalDate.of(2024, 1, 15));
 
-        Usuario usuario2 = new Usuario("Maria Santos", "maria.santos@email.com", "Análise de Dados", "SENIOR","maria123");
+        Usuario usuario2 = new Usuario("Maria Santos", "maria.santos@email.com", "Análise de Dados", "SENIOR", "maria123", false);
         usuario2.setDataCadastro(LocalDate.of(2023, 8, 22));
 
-        Usuario usuario3 = new Usuario("Pedro Oliveira", "pedro.oliveira@email.com", "Marketing", "JUNIOR","pedro123");
+        Usuario usuario3 = new Usuario("Pedro Oliveira", "pedro.oliveira@email.com", "Marketing", "JUNIOR", "pedro123", false);
         usuario3.setDataCadastro(LocalDate.of(2024, 3, 10));
 
-        Usuario usuario4 = new Usuario("Ana Costa", "ana.costa@email.com", "RH", "EM_TRANSICAO","ana123");
+        Usuario usuario4 = new Usuario("Ana Costa", "ana.costa@email.com", "RH", "EM_TRANSICAO", "ana123", false);
         usuario4.setDataCadastro(LocalDate.of(2024, 2, 5));
 
-        Usuario admin = new Usuario("Administrador", "admin@email.com", "TI", "ADMIN", "admin123");
-        usuarioRepository.save(admin);
 
-        usuarioRepository.saveAll(Arrays.asList(usuario1, usuario2, usuario3, usuario4));
+        Usuario admin = new Usuario("Administrador", "admin@email.com", "TI", "ADMIN", "admin123", true);
+
+        usuarioRepository.saveAll(Arrays.asList(admin, usuario1, usuario2, usuario3, usuario4));
     }
 
     private void criarTrilhas() {
@@ -128,21 +128,49 @@ public class DataLoader implements CommandLineRunner {
         trilhaRepository.saveAll(Arrays.asList(trilhaIA, trilhaDados, trilhaSoftSkills, trilhaCloud));
     }
 
-    private void criarMatriculas() {
+    private void criarMatriculasReais() {
+
         Usuario joao = usuarioRepository.findByEmail("joao.silva@email.com").orElseThrow();
         Usuario maria = usuarioRepository.findByEmail("maria.santos@email.com").orElseThrow();
         Usuario pedro = usuarioRepository.findByEmail("pedro.oliveira@email.com").orElseThrow();
+        Usuario ana = usuarioRepository.findByEmail("ana.costa@email.com").orElseThrow();
 
-        // Use findFirstByNome que retorna Optional<Trilha>
         Trilha trilhaIA = trilhaRepository.findFirstByNome("Fundamentos de IA e Machine Learning").orElseThrow();
         Trilha trilhaDados = trilhaRepository.findFirstByNome("Data Science para Negócios").orElseThrow();
         Trilha trilhaSoftSkills = trilhaRepository.findFirstByNome("Competências Humanas para Liderança").orElseThrow();
+        Trilha trilhaCloud = trilhaRepository.findFirstByNome("AWS Cloud Practitioner").orElseThrow();
 
         Matricula matricula1 = new Matricula(joao, trilhaIA, "ATIVA");
-        Matricula matricula2 = new Matricula(maria, trilhaDados, "ATIVA");
-        Matricula matricula3 = new Matricula(pedro, trilhaSoftSkills, "CONCLUIDA");
-        Matricula matricula4 = new Matricula(joao, trilhaDados, "ATIVA");
+        matricula1.setDataMatricula(LocalDate.of(2024, 1, 20));
 
-        matriculaRepository.saveAll(Arrays.asList(matricula1, matricula2, matricula3, matricula4));
+        Matricula matricula2 = new Matricula(maria, trilhaDados, "ATIVA");
+        matricula2.setDataMatricula(LocalDate.of(2024, 2, 15));
+
+        Matricula matricula3 = new Matricula(pedro, trilhaSoftSkills, "CONCLUIDA");
+        matricula3.setDataMatricula(LocalDate.of(2024, 1, 10));
+
+        Matricula matricula4 = new Matricula(joao, trilhaDados, "ATIVA");
+        matricula4.setDataMatricula(LocalDate.of(2024, 3, 1));
+
+        Matricula matricula5 = new Matricula(ana, trilhaCloud, "ATIVA");
+        matricula5.setDataMatricula(LocalDate.of(2024, 2, 28));
+
+        Matricula matricula6 = new Matricula(maria, trilhaSoftSkills, "ATIVA");
+        matricula6.setDataMatricula(LocalDate.of(2024, 3, 5));
+
+        Matricula matricula7 = new Matricula(pedro, trilhaCloud, "CANCELADA");
+        matricula7.setDataMatricula(LocalDate.of(2024, 1, 25));
+
+        matriculaRepository.saveAll(Arrays.asList(
+                matricula1, matricula2, matricula3, matricula4,
+                matricula5, matricula6, matricula7
+        ));
+
+        System.out.println("=== MATRÍCULAS CRIADAS ===");
+        System.out.println("Total de matrículas: " + matriculaRepository.count());
+        System.out.println("João: " + matriculaRepository.countByUsuario(joao) + " matrículas");
+        System.out.println("Maria: " + matriculaRepository.countByUsuario(maria) + " matrículas");
+        System.out.println("Pedro: " + matriculaRepository.countByUsuario(pedro) + " matrículas");
+        System.out.println("Ana: " + matriculaRepository.countByUsuario(ana) + " matrículas");
     }
 }

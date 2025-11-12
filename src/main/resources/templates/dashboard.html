@@ -22,6 +22,11 @@
             padding: 2rem;
             margin-bottom: 2rem;
         }
+        .admin-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -35,6 +40,7 @@
         <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
                     👋 Olá, <span th:text="${usuario.nome}">Usuário</span>!
+                    <span th:if="${usuario.admin}" class="badge admin-badge ms-2">ADMIN</span>
                 </span>
             <a class="nav-link" th:href="@{/logout}">
                 <i class="fas fa-sign-out-alt"></i> Sair
@@ -57,18 +63,36 @@
         </div>
     </div>
 
-    <!-- Botão Criar Nova Trilha - APENAS ADMIN -->
-    <div th:if="${isAdmin}" class="row mt-4">
-        <div class="col-12 text-end">
-            <a th:href="@{/trilhas/novo}" class="btn btn-success">
-                <i class="fas fa-plus"></i> Criar Nova Trilha
-            </a>
+    <!-- Botões de Administração - APENAS ADMIN -->
+    <div th:if="${usuario.admin}" class="row mt-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-crown"></i> Painel de Administração
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <a th:href="@{/trilhas/novo}" class="btn btn-success w-100">
+                                <i class="fas fa-plus"></i> Criar Nova Trilha
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <a th:href="@{/usuarios}" class="btn btn-primary w-100">
+                                <i class="fas fa-users"></i> Gerenciar Usuários
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Cards de Estatísticas -->
     <div class="row mt-4">
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="card text-white bg-success">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
@@ -77,30 +101,30 @@
                             <p>Trilhas Disponíveis</p>
                         </div>
                         <div class="align-self-center">
-                            <i class="fas fa-graduation-cap fa-3x"></i>
+                            <i class="fas fa-graduation-cap fa-2x"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="card text-white bg-warning">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h2 th:text="${totalCompetencias}">0</h2>
-                            <p>Competências para Dominar</p>
+                            <p>Competências</p>
                         </div>
                         <div class="align-self-center">
-                            <i class="fas fa-star fa-3x"></i>
+                            <i class="fas fa-star fa-2x"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="card text-white bg-info">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
@@ -109,7 +133,41 @@
                             <p>Minhas Matrículas</p>
                         </div>
                         <div class="align-self-center">
-                            <i class="fas fa-bookmark fa-3x"></i>
+                            <i class="fas fa-bookmark fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card de Total de Usuários - APENAS ADMIN -->
+        <div th:if="${usuario.admin}" class="col-md-3 mb-3">
+            <div class="card text-white bg-secondary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 th:text="${totalUsuarios}">0</h2>
+                            <p>Total de Usuários</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card de Trilhas Concluídas - PARA USUÁRIOS COMUNS -->
+        <div th:unless="${usuario.admin}" class="col-md-3 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 th:text="${totalConcluidas}">0</h2>
+                            <p>Trilhas Concluídas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-trophy fa-2x"></i>
                         </div>
                     </div>
                 </div>
@@ -119,7 +177,7 @@
 
     <!-- Menu de Navegação -->
     <div class="row mt-5">
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center p-4">
                     <i class="fas fa-graduation-cap fa-4x text-success mb-3"></i>
@@ -134,7 +192,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center p-4">
                     <i class="fas fa-bookmark fa-4x text-primary mb-3"></i>
@@ -142,8 +200,45 @@
                     <p class="text-muted">
                         Acompanhe seu progresso nas trilhas em andamento e visualize suas conquistas
                     </p>
-                    <a th:href="@{/minhas-matriculas}" class="btn btn-primary btn-lg mt-3">
+                    <a th:href="@{/matriculas/minhas}" class="btn btn-primary btn-lg mt-3">
                         <i class="fas fa-list"></i> Ver Minhas Matrículas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card de Administração - APENAS ADMIN -->
+        <div th:if="${usuario.admin}" class="col-md-4 mb-4">
+            <div class="card h-100 border-warning">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-crown fa-4x text-warning mb-3"></i>
+                    <h4>Administração</h4>
+                    <p class="text-muted">
+                        Gerencie usuários, trilhas e todo o sistema da plataforma
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/usuarios}" class="btn btn-warning btn-lg">
+                            <i class="fas fa-users"></i> Gerenciar Usuários
+                        </a>
+                        <a th:href="@{/trilhas}" class="btn btn-outline-dark btn-sm">
+                            <i class="fas fa-list"></i> Ver Todas as Trilhas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Alternativo para Usuários Comuns -->
+        <div th:unless="${usuario.admin}" class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-chart-line fa-4x text-info mb-3"></i>
+                    <h4>Meu Progresso</h4>
+                    <p class="text-muted">
+                        Acompanhe seu desenvolvimento e conquistas nas competências do futuro
+                    </p>
+                    <a th:href="@{/matriculas/minhas}" class="btn btn-info btn-lg mt-3">
+                        <i class="fas fa-chart-bar"></i> Ver Meu Progresso
                     </a>
                 </div>
             </div>

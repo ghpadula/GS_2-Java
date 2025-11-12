@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Matrículas - UP SKILLING 2030</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .card {
+            transition: transform 0.2s;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-graduation-cap"></i> UP Skilling 2030
+        </a>
+        <div class="navbar-nav ms-auto">
+            <span class="navbar-text me-3">
+                <i class="fas fa-user"></i>
+                <span th:text="${usuario.nome}">Usuário</span>
+                <span th:if="${usuario.admin}" class="badge bg-warning ms-2">ADMIN</span>
+            </span>
+            <a class="btn btn-outline-light btn-sm" href="/logout">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1><i class="fas fa-bookmark text-primary"></i> Minhas Matrículas</h1>
+            <p class="text-muted">Acompanhe seu progresso nas trilhas de aprendizado</p>
+        </div>
+        <a th:href="@{/trilhas}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nova Matrícula
+        </a>
+    </div>
+
+    <!-- Mensagens -->
+    <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${sucesso}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h3 th:text="${totalMatriculas}">0</h3>
+                    <p>Total de Matrículas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h3 th:text="${totalAtivas}">0</h3>
+                    <p>Em Andamento</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h3 th:text="${totalConcluidas}">0</h3>
+                    <p>Concluídas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Matrículas -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list"></i> Minhas Trilhas
+            </h5>
+        </div>
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(matriculas)}" class="text-center py-5">
+                <i class="fas fa-bookmark fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">Nenhuma matrícula encontrada</h4>
+                <p class="text-muted">Você ainda não se matriculou em nenhuma trilha.</p>
+                <a th:href="@{/trilhas}" class="btn btn-primary mt-2">
+                    <i class="fas fa-search"></i> Explorar Trilhas
+                </a>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(matriculas)}">
+                <div th:each="matricula : ${matriculas}" class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 th:text="${matricula.trilha.nome}">Nome da Trilha</h5>
+                                <p class="text-muted" th:text="${matricula.trilha.descricao}">Descrição</p>
+
+                                <div class="mb-2">
+                                    <!-- Status simplificado -->
+                                    <span th:if="${matricula.status == 'ATIVA'}" class="badge bg-success status-badge">
+                                        ATIVA
+                                    </span>
+                                    <span th:if="${matricula.status == 'CONCLUIDA'}" class="badge bg-warning status-badge">
+                                        CONCLUÍDA
+                                    </span>
+                                    <span th:if="${matricula.status == 'CANCELADA'}" class="badge bg-secondary status-badge">
+                                        CANCELADA
+                                    </span>
+
+                                    <small class="text-muted ms-2">
+                                        <i class="fas fa-calendar"></i>
+                                        <span th:text="${#temporals.format(matricula.dataMatricula, 'dd/MM/yyyy')}">Data</span>
+                                    </small>
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-signal"></i> Nível:
+                                        <span th:text="${matricula.trilha.nivel}">Nível</span>
+                                    </small>
+                                    <small class="text-muted ms-3">
+                                        <i class="fas fa-clock"></i> Carga Horária:
+                                        <span th:text="${matricula.trilha.cargaHoraria}">0</span>h
+                                    </small>
+                                </div>
+
+                                <!-- Competências -->
+                                <div th:if="${not #lists.isEmpty(matricula.trilha.competencias)}" class="mb-2">
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="fas fa-star"></i> Competências:
+                                    </small>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span th:each="competencia : ${matricula.trilha.competencias}"
+                                              class="badge bg-light text-dark border">
+                                            <span th:text="${competencia.nome}">Competência</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="btn-group-vertical ms-3">
+                                <a th:href="@{/trilhas/{id}(id=${matricula.trilha.id})}"
+                                   class="btn btn-outline-primary btn-sm mb-1">
+                                    <i class="fas fa-eye"></i> Detalhes
+                                </a>
+
+                                <form th:if="${matricula.status == 'ATIVA'}"
+                                      th:action="@{/matriculas/{id}/concluir(id=${matricula.id})}"
+                                      method="post" class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-success btn-sm mb-1"
+                                            th:onclick="return confirm('Marcar esta trilha como concluída?')">
+                                        <i class="fas fa-check"></i> Concluir
+                                    </button>
+                                </form>
+
+                                <form th:if="${matricula.status == 'ATIVA'}"
+                                      th:action="@{/matriculas/{id}/cancelar(id=${matricula.id})}"
+                                      method="post" class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm"
+                                            th:onclick="return confirm('Cancelar esta matrícula?')">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão Voltar -->
+    <div class="mt-3">
+        <a href="/dashboard" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

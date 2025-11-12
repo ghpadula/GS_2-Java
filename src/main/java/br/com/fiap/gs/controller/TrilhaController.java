@@ -7,6 +7,7 @@ import br.com.fiap.gs.model.Matricula;
 import br.com.fiap.gs.repository.TrilhaRepository;
 import br.com.fiap.gs.repository.MatriculaRepository;
 import br.com.fiap.gs.repository.CompetenciaRepository;
+import br.com.fiap.gs.service.MatriculaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,9 +31,11 @@ public class TrilhaController {
     @Autowired
     private CompetenciaRepository competenciaRepository;
 
+    @Autowired
+    private MatriculaService matriculaService;
 
     private boolean isAdmin(Usuario usuario) {
-        return usuario != null && "admin@email.com".equals(usuario.getEmail());
+        return usuario != null && usuario.isAdmin();
     }
 
     @GetMapping
@@ -46,7 +49,6 @@ public class TrilhaController {
         }
 
         List<Trilha> trilhas;
-
 
         if (nivel != null && !nivel.isEmpty()) {
             trilhas = trilhaRepository.findByNivel(nivel);
@@ -141,7 +143,6 @@ public class TrilhaController {
         }
     }
 
-
     @GetMapping("/{id}/editar")
     public String formularioEditarTrilha(@PathVariable Long id, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
@@ -179,7 +180,6 @@ public class TrilhaController {
             return "redirect:/login";
         }
 
-
         if (!isAdmin(usuario)) {
             return "redirect:/trilhas?erro=acesso_negado";
         }
@@ -190,13 +190,11 @@ public class TrilhaController {
             if (trilhaOpt.isPresent()) {
                 Trilha trilhaExistente = trilhaOpt.get();
 
-
                 trilhaExistente.setNome(trilhaAtualizada.getNome());
                 trilhaExistente.setDescricao(trilhaAtualizada.getDescricao());
                 trilhaExistente.setNivel(trilhaAtualizada.getNivel());
                 trilhaExistente.setCargaHoraria(trilhaAtualizada.getCargaHoraria());
                 trilhaExistente.setFocoPrincipal(trilhaAtualizada.getFocoPrincipal());
-
 
                 if (competenciasIds != null && !competenciasIds.isEmpty()) {
                     List<Competencia> competenciasSelecionadas = competenciaRepository.findAllById(competenciasIds);
@@ -225,7 +223,6 @@ public class TrilhaController {
         if (usuario == null) {
             return "redirect:/login";
         }
-
 
         if (!isAdmin(usuario)) {
             return "redirect:/trilhas?erro=acesso_negado";
@@ -257,7 +254,6 @@ public class TrilhaController {
         }
     }
 
-
     @PostMapping("/{id}/matricular")
     public String matricular(@PathVariable Long id, HttpSession session,
                              RedirectAttributes redirectAttributes) {
@@ -266,19 +262,14 @@ public class TrilhaController {
             return "redirect:/login";
         }
 
-        Optional<Trilha> trilhaOpt = trilhaRepository.findById(id);
-
-        if (trilhaOpt.isPresent()) {
-            if (!matriculaRepository.existsByUsuarioIdAndTrilhaId(usuario.getId(), id)) {
-                redirectAttributes.addFlashAttribute("sucesso",
-                        "Matrícula realizada com sucesso na trilha: " + trilhaOpt.get().getNome());
-                return "redirect:/trilhas/" + id + "?sucesso=matricula_realizada";
-            } else {
-                redirectAttributes.addFlashAttribute("erro", "Você já está matriculado nesta trilha!");
-                return "redirect:/trilhas/" + id;
-            }
-        } else {
-            return "redirect:/trilhas?erro=trilha_nao_encontrada";
+        try {
+            Matricula matricula = matriculaService.matricularUsuario(usuario, id);
+            redirectAttributes.addFlashAttribute("sucesso",
+                    "Matrícula realizada com sucesso na trilha: " + matricula.getTrilha().getNome());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
         }
+
+        return "redirect:/trilhas/" + id;
     }
 }
