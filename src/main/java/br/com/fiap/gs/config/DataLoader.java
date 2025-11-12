@@ -1,4 +1,4 @@
-package br.com.fiap.gs.config;
+/*package br.com.fiap.gs.config;
 
 import br.com.fiap.gs.model.Usuario;
 import br.com.fiap.gs.model.Trilha;
@@ -173,4 +173,4 @@ public class DataLoader implements CommandLineRunner {
         System.out.println("Pedro: " + matriculaRepository.countByUsuario(pedro) + " matrículas");
         System.out.println("Ana: " + matriculaRepository.countByUsuario(ana) + " matrículas");
     }
-}
+}*/

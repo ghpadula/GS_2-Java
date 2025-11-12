@@ -1,7 +1,7 @@
 package br.com.fiap.gs.controller;
 
 import br.com.fiap.gs.model.Usuario;
-import br.com.fiap.gs.repository.UsuarioRepository;
+import br.com.fiap.gs.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
 
     @GetMapping
     public String listarUsuarios(Model model, HttpSession session) {
@@ -28,7 +28,7 @@ public class UsuarioController {
             return "redirect:/login";
         }
 
-        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<Usuario> usuarios = usuarioService.findAll();
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("usuarioLogado", usuarioLogado);
         return "usuarios";
@@ -41,7 +41,7 @@ public class UsuarioController {
             return "redirect:/login";
         }
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+        Optional<Usuario> usuarioOpt = usuarioService.findById(id);
         if (usuarioOpt.isEmpty()) {
             return "redirect:/usuarios";
         }
@@ -81,8 +81,7 @@ public class UsuarioController {
         System.out.println("Área: " + usuario.getAreaAtuacao());
         System.out.println("Nível: " + usuario.getNivelCarreira());
 
-        // Validar se email já existe
-        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+        if (usuarioService.findByEmail(usuario.getEmail()).isPresent()) {
             result.rejectValue("email", "error.usuario", "Email já cadastrado");
             System.out.println("ERRO: Email já existe");
         }
@@ -96,7 +95,7 @@ public class UsuarioController {
 
         try {
             usuario.setAdmin(false);
-            usuarioRepository.save(usuario);
+            usuarioService.save(usuario);
             System.out.println("USUÁRIO SALVO COM SUCESSO! ID: " + usuario.getId());
 
             redirectAttributes.addFlashAttribute("mensagem", "Usuário criado com sucesso!");
@@ -116,7 +115,7 @@ public class UsuarioController {
             return "redirect:/login";
         }
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+        Optional<Usuario> usuarioOpt = usuarioService.findById(id);
         if (usuarioOpt.isEmpty()) {
             return "redirect:/usuarios";
         }
@@ -138,7 +137,7 @@ public class UsuarioController {
             return "redirect:/login";
         }
 
-        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
+        Optional<Usuario> usuarioExistente = usuarioService.findByEmail(usuario.getEmail());
         if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(id)) {
             result.rejectValue("email", "error.usuario", "Email já cadastrado");
         }
@@ -148,13 +147,13 @@ public class UsuarioController {
             return "form-usuario";
         }
 
-        Optional<Usuario> usuarioOriginalOpt = usuarioRepository.findById(id);
+        Optional<Usuario> usuarioOriginalOpt = usuarioService.findById(id);
         if (usuarioOriginalOpt.isPresent()) {
             usuario.setAdmin(usuarioOriginalOpt.get().isAdmin());
         }
 
         usuario.setId(id);
-        usuarioRepository.save(usuario);
+        usuarioService.save(usuario);
 
         redirectAttributes.addFlashAttribute("mensagem", "Usuário atualizado com sucesso!");
         return "redirect:/usuarios";
@@ -174,14 +173,12 @@ public class UsuarioController {
             return "redirect:/usuarios";
         }
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+        Optional<Usuario> usuarioOpt = usuarioService.findById(id);
         if (usuarioOpt.isPresent()) {
-            usuarioRepository.delete(usuarioOpt.get());
+            usuarioService.deleteById(id);
             redirectAttributes.addFlashAttribute("mensagem", "Usuário excluído com sucesso!");
         }
 
         return "redirect:/usuarios";
     }
-
-
 }
