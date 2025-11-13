@@ -14,10 +14,10 @@ Desenvolvemos uma API RESTful completa para uma plataforma de Upskilling/Reskill
 - Acesso a trilhas de aprendizagem focadas em competências do futuro
 - Sistema de matrículas em trilhas para requalificação profissional
 
-## 🛠Tecnologias e Versões
+##Tecnologias e Versões
 
 ### **Linguagem e Framework**
-- **Java**: 21
+- **Java**: 17
 - **Spring Boot**: 3.2.0
 - **Maven**: 3.8+
 
@@ -47,7 +47,7 @@ Desenvolvemos uma API RESTful completa para uma plataforma de Upskilling/Reskill
 ## Como Executar o Projeto
 
 ### Pré-requisitos
-- Java 21 instalado
+- Java 17 instalado
 - Maven 3.8+ instalado
 
 ### 1. Instalar Dependências

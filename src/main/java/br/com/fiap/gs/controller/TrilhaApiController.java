@@ -23,9 +23,8 @@ public class TrilhaApiController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Trilha> buscarPorId(@PathVariable Long id) {
-        return trilhaService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Trilha trilha = trilhaService.findOrThrow(id);
+        return ResponseEntity.ok(trilha);
     }
 
     @PostMapping

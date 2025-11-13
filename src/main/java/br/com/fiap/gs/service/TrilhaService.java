@@ -1,5 +1,6 @@
 package br.com.fiap.gs.service;
 
+import br.com.fiap.gs.exception.TrailNotFoundException;
 import br.com.fiap.gs.model.Trilha;
 import br.com.fiap.gs.repository.TrilhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,10 @@ public class TrilhaService {
 
     public Optional<Trilha> findFirstByNome(String nome) {
         return trilhaRepository.findFirstByNome(nome);
+    }
+
+    public Trilha findOrThrow(Long id) {
+        return trilhaRepository.findById(id)
+                .orElseThrow(() -> new TrailNotFoundException(id));
     }
 }

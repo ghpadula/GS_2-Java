@@ -1,3 +1,42 @@
 2025-11-13 12:24:22.722346-03:00 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRILHAS_COMPETENCIA" not found; SQL statement:
 Select * from trilhas_competencia [42102-232]
+2025-11-13 14:05:03.577377-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "show [*]* from trilhas"; SQL statement:
+show * from trilhas [42000-232]
+2025-11-13 14:05:13.696611-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SHOW [*]* FROM TRILHAS"; SQL statement:
+SHOW * FROM TRILHAS [42000-232]
+2025-11-13 14:05:14.284717-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SHOW [*]* FROM TRILHAS"; SQL statement:
+SHOW * FROM TRILHAS [42000-232]
+2025-11-13 14:05:30.380532-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM TRILHAS\000d\000a[*]SELECT * FROM USUARIOS"; SQL statement:
+SELECT * FROM TRILHAS
+SELECT * FROM USUARIOS [42000-232]
+2025-11-13 14:05:33.215860-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM TRILHAS\000d\000a[*]SELECT * FROM USUARIOS"; SQL statement:
+SELECT * FROM TRILHAS
+SELECT * FROM USUARIOS [42000-232]
+2025-11-13 14:05:35.700726-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM TRILHAS\000d\000a[*]SELECT * FROM USUARIOS"; SQL statement:
+SELECT * FROM TRILHAS
+SELECT * FROM USUARIOS [42000-232]
+2025-11-13 14:05:43.649308-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM TRILHAS\000d\000a[*]/\000d\000a\000d\000aSELECT * FROM USUARIOS"; SQL statement:
+SELECT * FROM TRILHAS
+/
+
+SELECT * FROM USUARIOS [42000-232]
+2025-11-13 14:05:44.124327-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM TRILHAS\000d\000a[*]/\000d\000a\000d\000aSELECT * FROM USUARIOS"; SQL statement:
+SELECT * FROM TRILHAS
+/
+
+SELECT * FROM USUARIOS [42000-232]
+2025-11-13 14:06:00.937605-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM TRILHAS\000d\000a[*]/\000d\000a\000d\000aSELECT * FROM USUARIOS"; SQL statement:
+SELECT * FROM TRILHAS
+/
+
+SELECT * FROM USUARIOS [42000-232]

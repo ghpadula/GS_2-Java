@@ -25,7 +25,7 @@ public class Matricula {
     private Trilha trilha;
 
     @Column(nullable = false, length = 20)
-    private String status; // ATIVA, CONCLUIDA, CANCELADA
+    private String status;
 
     @Column(name = "data_matricula", nullable = false)
     private LocalDate dataMatricula;

@@ -2,6 +2,7 @@ package br.com.fiap.gs.controller;
 
 import br.com.fiap.gs.model.Usuario;
 import br.com.fiap.gs.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +24,13 @@ public class UsuarioApiController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
-        return usuarioService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Usuario usuario = usuarioService.findOrThrow(id);
+        return ResponseEntity.ok(usuario);
     }
 
+
     @PostMapping
-    public ResponseEntity<Usuario> criar(@RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> criar(@Valid @RequestBody Usuario usuario) {
         if (usuarioService.findByEmail(usuario.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().build();
         }

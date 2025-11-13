@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/matriculas")
+@RequestMapping("/api/matriculas" )
 public class MatriculaApiController {
 
     @Autowired
@@ -22,87 +22,56 @@ public class MatriculaApiController {
 
 
     @PostMapping("/usuario/{usuarioId}/trilha/{trilhaId}")
-    public ResponseEntity<?> matricularUsuario(
+    public ResponseEntity<Matricula> matricularUsuario(
             @PathVariable Long usuarioId,
             @PathVariable Long trilhaId) {
 
-        try {
+        Usuario usuario = usuarioService.findOrThrow(usuarioId);
 
-            Usuario usuario = usuarioService.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Matricula matricula = matriculaService.matricularUsuario(usuario, trilhaId);
 
-
-            Matricula matricula = matriculaService.matricularUsuario(usuario, trilhaId);
-            return ResponseEntity.status(201).body(matricula);
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.status(201).body(matricula);
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<?> listarMatriculasUsuario(@PathVariable Long usuarioId) {
-        try {
-            Usuario usuario = usuarioService.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public ResponseEntity<List<Matricula>> listarMatriculasUsuario(@PathVariable Long usuarioId) {
+        Usuario usuario = usuarioService.findOrThrow(usuarioId);
 
-            List<Matricula> matriculas = matriculaService.listarMatriculasDoUsuario(usuario);
-            return ResponseEntity.ok(matriculas);
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        List<Matricula> matriculas = matriculaService.listarMatriculasDoUsuario(usuario);
+        return ResponseEntity.ok(matriculas);
     }
 
     @PutMapping("/{matriculaId}/cancelar")
-    public ResponseEntity<?> cancelarMatricula(
+    public ResponseEntity<String> cancelarMatricula(
             @PathVariable Long matriculaId,
             @RequestParam Long usuarioId) {
 
-        try {
-            Usuario usuario = usuarioService.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioService.findOrThrow(usuarioId);
 
-            matriculaService.cancelarMatricula(matriculaId, usuario);
-            return ResponseEntity.ok("Matrícula cancelada com sucesso");
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        matriculaService.cancelarMatricula(matriculaId, usuario);
+        return ResponseEntity.ok("Matrícula cancelada com sucesso");
     }
 
     @PutMapping("/{matriculaId}/concluir")
-    public ResponseEntity<?> concluirMatricula(
+    public ResponseEntity<String> concluirMatricula(
             @PathVariable Long matriculaId,
             @RequestParam Long usuarioId) {
 
-        try {
-            Usuario usuario = usuarioService.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioService.findOrThrow(usuarioId);
 
-            matriculaService.concluirMatricula(matriculaId, usuario);
-            return ResponseEntity.ok("Matrícula concluída com sucesso");
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        matriculaService.concluirMatricula(matriculaId, usuario);
+        return ResponseEntity.ok("Matrícula concluída com sucesso");
     }
 
     @GetMapping("/usuario/{usuarioId}/estatisticas")
-    public ResponseEntity<?> getEstatisticasUsuario(@PathVariable Long usuarioId) {
-        try {
-            Usuario usuario = usuarioService.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public ResponseEntity<EstatisticasResponse> getEstatisticasUsuario(@PathVariable Long usuarioId) {
+        Usuario usuario = usuarioService.findOrThrow(usuarioId);
 
-            long ativas = matriculaService.contarMatriculasAtivasDoUsuario(usuario);
-            long concluidas = matriculaService.contarMatriculasConcluidasDoUsuario(usuario);
+        long ativas = matriculaService.contarMatriculasAtivasDoUsuario(usuario);
+        long concluidas = matriculaService.contarMatriculasConcluidasDoUsuario(usuario);
 
-            var estatisticas = new EstatisticasResponse(ativas, concluidas);
-            return ResponseEntity.ok(estatisticas);
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        var estatisticas = new EstatisticasResponse(ativas, concluidas);
+        return ResponseEntity.ok(estatisticas);
     }
 
 
@@ -121,17 +90,12 @@ public class MatriculaApiController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarMatricula(@PathVariable Long id) {
-        try {
-            if (!matriculaService.existsById(id)) {
-                return ResponseEntity.notFound().build();
-            }
-
-            matriculaService.deleteById(id);
-            return ResponseEntity.noContent().build();
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<Void> deletarMatricula(@PathVariable Long id) {
+        if (!matriculaService.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
+
+        matriculaService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
