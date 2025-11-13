@@ -1,5 +1,6 @@
 package br.com.fiap.gs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,10 +16,12 @@ public class Matricula {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonIgnore
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "trilha_id", nullable = false)
+    @JsonIgnore
     private Trilha trilha;
 
     @Column(nullable = false, length = 20)

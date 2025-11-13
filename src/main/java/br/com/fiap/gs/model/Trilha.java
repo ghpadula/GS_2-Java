@@ -1,5 +1,6 @@
 package br.com.fiap.gs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,7 @@ public class Trilha {
             joinColumns = @JoinColumn(name = "trilha_id"),
             inverseJoinColumns = @JoinColumn(name = "competencia_id")
     )
+    @JsonIgnore
     private List<Competencia> competencias = new ArrayList<>();
 
     public Trilha() {}

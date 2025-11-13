@@ -8,6 +8,7 @@ import br.com.fiap.gs.repository.TrilhaRepository;
 import br.com.fiap.gs.repository.MatriculaRepository;
 import br.com.fiap.gs.repository.CompetenciaRepository;
 import br.com.fiap.gs.service.MatriculaService;
+import br.com.fiap.gs.service.TrilhaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class TrilhaController {
 
     @Autowired
-    private TrilhaRepository trilhaRepository;
+    private TrilhaService trilhaService;
 
     @Autowired
     private MatriculaRepository matriculaRepository;
@@ -51,11 +52,11 @@ public class TrilhaController {
         List<Trilha> trilhas;
 
         if (nivel != null && !nivel.isEmpty()) {
-            trilhas = trilhaRepository.findByNivel(nivel);
+            trilhas = trilhaService.findByNivel(nivel);
         } else if (foco != null && !foco.isEmpty()) {
-            trilhas = trilhaRepository.findByFocoPrincipal(foco);
+            trilhas = trilhaService.findByFocoPrincipal(foco);
         } else {
-            trilhas = trilhaRepository.findAll();
+            trilhas = trilhaService.findAll();
         }
 
         model.addAttribute("usuario", usuario);
@@ -74,7 +75,7 @@ public class TrilhaController {
             return "redirect:/login";
         }
 
-        Optional<Trilha> trilhaOpt = trilhaRepository.findById(id);
+        Optional<Trilha> trilhaOpt = trilhaService.findById(id);
 
         if (trilhaOpt.isPresent()) {
             Trilha trilha = trilhaOpt.get();
@@ -134,7 +135,7 @@ public class TrilhaController {
                 trilha.setCompetencias(competenciasSelecionadas);
             }
 
-            trilhaRepository.save(trilha);
+            trilhaService.save(trilha);
             redirectAttributes.addFlashAttribute("sucesso", "Trilha criada com sucesso!");
             return "redirect:/trilhas";
         } catch (Exception e) {
@@ -154,7 +155,7 @@ public class TrilhaController {
             return "redirect:/trilhas?erro=acesso_negado";
         }
 
-        Optional<Trilha> trilhaOpt = trilhaRepository.findById(id);
+        Optional<Trilha> trilhaOpt = trilhaService.findById(id);
 
         if (trilhaOpt.isPresent()) {
             List<Competencia> competencias = competenciaRepository.findAll();
@@ -185,7 +186,7 @@ public class TrilhaController {
         }
 
         try {
-            Optional<Trilha> trilhaOpt = trilhaRepository.findById(id);
+            Optional<Trilha> trilhaOpt = trilhaService.findById(id);
 
             if (trilhaOpt.isPresent()) {
                 Trilha trilhaExistente = trilhaOpt.get();
@@ -203,7 +204,7 @@ public class TrilhaController {
                     trilhaExistente.getCompetencias().clear();
                 }
 
-                trilhaRepository.save(trilhaExistente);
+                trilhaService.save(trilhaExistente);
                 redirectAttributes.addFlashAttribute("sucesso", "Trilha atualizada com sucesso!");
             } else {
                 redirectAttributes.addFlashAttribute("erro", "Trilha não encontrada!");
@@ -229,7 +230,7 @@ public class TrilhaController {
         }
 
         try {
-            Optional<Trilha> trilhaOpt = trilhaRepository.findById(id);
+            Optional<Trilha> trilhaOpt = trilhaService.findById(id);
 
             if (trilhaOpt.isPresent()) {
                 List<Matricula> matriculas = matriculaRepository.findByTrilhaId(id);
@@ -240,7 +241,7 @@ public class TrilhaController {
                             "Não é possível excluir a trilha pois existem matrículas ativas!");
                     System.out.println("DEBUG - Não pode excluir: tem " + matriculas.size() + " matrículas");
                 } else {
-                    trilhaRepository.deleteById(id);
+                    trilhaService.deleteById(id);
                     redirectAttributes.addFlashAttribute("sucesso", "Trilha excluída com sucesso!");
                 }
             } else {

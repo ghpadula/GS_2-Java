@@ -94,4 +94,11 @@ public class MatriculaService {
     public long contarMatriculasConcluidasDoUsuario(Usuario usuario) {
         return matriculaRepository.countByUsuarioAndStatus(usuario, "CONCLUIDA");
     }
+
+    public void deleteById(Long id) {
+        matriculaRepository.deleteById(id);
+    }
+    public boolean existsById(Long id) {
+        return matriculaRepository.existsById(id);
+    }
 }

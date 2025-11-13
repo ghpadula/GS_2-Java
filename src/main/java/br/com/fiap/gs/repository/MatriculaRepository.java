@@ -26,4 +26,5 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
 
     @Query("SELECT COUNT(m) FROM Matricula m WHERE m.trilha = :trilha")
     long countByTrilha(@Param("trilha") Trilha trilha);
+
 }
