@@ -1,5 +1,10 @@
 # Plataforma de Upskilling/Reskilling 2030
 
+## Integrantes
+- Gabriel Henrique Padula- RM554907
+- Gustavo Pierri  - RM558928
+- Rodrigo Nakata – RM556417
+
 ## Descrição do Projeto
 
 ### Problema
